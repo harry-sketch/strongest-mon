@@ -10,18 +10,22 @@ export const Pokemon: React.FC<Props> = ({
   pokemon,
   voteForStrongestHandler,
 }) => (
-  <div className="flex flex-col items-center justify-center gap-4 rounded border border-slate-50 p-4 text-lg text-slate-100">
+  <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-slate-50 p-4 text-lg text-slate-100">
     {pokemon?.image.front_default ? (
       <Image
         src={pokemon?.image.front_default}
         alt={pokemon?.name}
         width={150}
         height={150}
-        className="object-cover"
+        quality={100}
+        priority
+        className="object-cover "
       />
     ) : null}
 
-    <div>{pokemon?.name}</div>
+    <div className=" text-xl font-bold capitalize text-slate-100">
+      {pokemon?.name}
+    </div>
 
     <button
       onClick={voteForStrongestHandler}

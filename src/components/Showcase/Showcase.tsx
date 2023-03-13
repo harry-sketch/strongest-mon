@@ -22,18 +22,36 @@ export const Showcase: React.FC = () => {
       }
     );
 
-  const { data: secondPokemon, isLoading: isSecondPokemonLoading } =
-    api.pokemon.getPokemonById.useQuery(
-      {
-        id: secondId,
-      },
-      {
-        enabled: secondId !== undefined,
-      }
-    );
+  const {
+    data: secondPokemon,
+    isLoading: isSecondPokemonLoading,
+    refetch,
+  } = api.pokemon.getPokemonById.useQuery(
+    {
+      id: secondId,
+    },
+    {
+      enabled: secondId !== undefined,
+    }
+  );
 
-  const voteForStrongestHandler = (selectedId: number | undefined) =>
+  const castVoting = api.pokemon.castVote.useMutation({
+    onSuccess: () => {
+      void refetch();
+    },
+  });
+
+  const voteForStrongestHandler = (selectedId: number | undefined) => {
+    if (!selectedId) return;
+
+    if (selectedId === firstId) {
+      castVoting.mutate({ votedFor: firstId, votedAgainst: secondId });
+    } else {
+      castVoting.mutate({ votedFor: secondId, votedAgainst: firstId });
+    }
+
     updateIds(getOptionsFoVoting());
+  };
 
   if (isFirstPokemonLoading || isSecondPokemonLoading)
     return <div className="text-lg text-slate-50">Loading...</div>;
