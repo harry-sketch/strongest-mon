@@ -1,9 +1,9 @@
-const MaxPokemonId = 5;
+const MaxPokemonId = 500;
 
 export const getRandomPokemonId: (notSameNumber?: number) => number = (
   notSameNumber
 ) => {
-  const pokemonNumber = Math.floor(Math.random() * (MaxPokemonId + 1) - 1);
+  const pokemonNumber = Math.floor(Math.random() * MaxPokemonId + 1 - 1);
 
   if (pokemonNumber !== notSameNumber) return pokemonNumber;
 

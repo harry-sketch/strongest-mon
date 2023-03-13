@@ -1,25 +1,55 @@
+import { useState } from "react";
+import { getOptionsFoVoting } from "(~/)/utils/helpers";
+import { api } from "(~/)/utils/api";
+import type { RouterOutputs } from "(~/)/utils/api";
+import { Pokemon } from "./Pokemon";
+
+export type TPokemonType = RouterOutputs["pokemon"]["getPokemonById"];
+
 export const Showcase: React.FC = () => {
+  //    Local States
+  const [ids, updateIds] = useState<number[]>(() => getOptionsFoVoting());
+
+  const [firstId, secondId] = ids;
+
+  const { data: firstPokemon, isLoading: isFirstPokemonLoading } =
+    api.pokemon.getPokemonById.useQuery(
+      {
+        id: firstId,
+      },
+      {
+        enabled: firstId !== undefined,
+      }
+    );
+
+  const { data: secondPokemon, isLoading: isSecondPokemonLoading } =
+    api.pokemon.getPokemonById.useQuery(
+      {
+        id: secondId,
+      },
+      {
+        enabled: secondId !== undefined,
+      }
+    );
+
+  const voteForStrongestHandler = (selectedId: number | undefined) =>
+    updateIds(getOptionsFoVoting());
+
+  if (isFirstPokemonLoading || isSecondPokemonLoading)
+    return <div className="text-lg text-slate-50">Loading...</div>;
+
   return (
     <div className="flex items-center">
-      <div className="flex flex-col items-center justify-center gap-4 rounded border border-slate-50 p-4 text-lg text-slate-100">
-        <div>first</div>
+      <Pokemon
+        pokemon={firstPokemon}
+        voteForStrongestHandler={() => voteForStrongestHandler(firstId)}
+      />
 
-        <button type="button" className="rounded border border-slate-50 p-2">
-          Strongest
-        </button>
-      </div>
       <div className="p-4 text-slate-50">vs</div>
-      <div className="flex flex-col items-center justify-center gap-4 rounded border border-slate-50 p-4 text-lg text-slate-100 ">
-        <div>second</div>
-
-        <button
-          type="button"
-          className="rounded border border-slate-50 p-2"
-          onClick={() => ""}
-        >
-          Strongest
-        </button>
-      </div>
+      <Pokemon
+        pokemon={secondPokemon}
+        voteForStrongestHandler={() => voteForStrongestHandler(secondId)}
+      />
     </div>
   );
 };
